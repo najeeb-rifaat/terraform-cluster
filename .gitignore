@@ -1,2 +1,2 @@
 .terraform/
-state/*.backup
+state/

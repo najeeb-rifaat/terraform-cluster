@@ -8,7 +8,7 @@ ifeq ("$(wildcard state/id_rsa)","")
 	ssh-keygen -t rsa -b 4096 -f state/id_rsa -C ubuntu -N "" -q
 endif
 
-start:
+start: build
 	terraform apply
 
 refresh:

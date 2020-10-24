@@ -14,6 +14,10 @@ variable "disk_size" {
   default = 10737418240
 }
 
+variable "base_image" {
+  default = "/opt/img/ubuntu-20.qcow2"
+}
+
 # OS Settings
 variable "username" {
   default = "user"
