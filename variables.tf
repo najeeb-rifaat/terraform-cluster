@@ -23,16 +23,26 @@ variable "username" {
   default = "user"
 }
 
+# Files Settings
+variable "state_path" {
+  default = "state"
+}
+
 variable "ssh_private_key" {
-  default = "./state/id_rsa"
+  default = "id_rsa"
 }
 
 variable "ssh_public_key" {
-  default = "./state/id_rsa.pub"
+  default = "id_rsa.pub"
 }
 
-# Network settings
-variable "netmask" {
+# Network Settings
+variable "network_ip" {
   type    = string
   default = "192.168.123.%d"
+}
+
+variable "network_cidr" {
+  type    = string
+  default = "192.168.123.%d/24"
 }

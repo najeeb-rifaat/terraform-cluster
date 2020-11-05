@@ -25,7 +25,7 @@ resource "libvirt_network" "cluster-net" {
   domain = "cluster-net.local"
 
   # append ".1" as the network address with /24 CIDR
-  addresses = [format("%s/%s",format(var.netmask, "1"), "24")]
+  addresses = [format(var.network_cidr, "1")]
   dns {
     enabled = true
     local_only = true
@@ -63,6 +63,7 @@ data "template_file" "user_data" {
   vars     = {
     username = var.username
     node_name = "cluster-node-${count.index}"
+    state_path = var.state_path
     ssh_public_key = var.ssh_public_key
     network_name = libvirt_network.cluster-net.name
   }
@@ -93,7 +94,7 @@ resource "libvirt_domain" "nodes" {
 
   network_interface {
     network_name   = "cluster-net"
-    addresses = [format(var.netmask, count.index + 2)]
+    addresses = [format(var.network_ip, count.index + 2)]
     wait_for_lease = true
   }
 

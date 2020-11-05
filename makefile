@@ -19,4 +19,5 @@ destroy: refresh
 
 clean: destroy
 	rm -rf state/id_rsa**
-	rm -rf state/hosts.cfg
+	rm -rf state/inventory
+	rm -rf state/ansible.cfg
