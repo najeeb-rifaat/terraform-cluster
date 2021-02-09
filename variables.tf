@@ -15,7 +15,7 @@ variable "disk_size" {
 }
 
 variable "base_image" {
-  default = "/opt/img/ubuntu-20.qcow2"
+  default = "$HOME/img/ubuntu-20.qcow2"
 }
 
 # OS Settings

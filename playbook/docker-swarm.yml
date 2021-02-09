@@ -1,0 +1,15 @@
+---
+- hosts: all
+  name: Apply base settings to all nodes
+  roles:
+    - base
+
+- hosts: managers
+  name: Link all cluster managers
+  roles:
+    - cluster_manager
+
+- hosts: workers
+  name: Link all cluster workers
+  roles:
+    - cluster_worker

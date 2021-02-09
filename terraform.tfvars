@@ -1,7 +1,7 @@
-nodes=2
+nodes=5
 memory=1024
 disk_size=10737418240
-base_image="/opt/img/ubuntu-20.qcow2"
+base_image="/home/najee89b/img/ubuntu-20.qcow2"
 
 state_path="state"
 username="user"

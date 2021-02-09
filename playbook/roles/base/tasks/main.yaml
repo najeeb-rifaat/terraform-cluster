@@ -1,0 +1,23 @@
+---
+- name: Update apt repositories
+  become: true
+  apt:
+    update_cache: yes
+
+- name: Upgrade all packages to latest
+  become: true
+  apt:
+    name: "*"
+    state: latest
+
+- name: Install docker.io package
+  become: true
+  apt:
+    name: docker.io
+    state: present
+
+- name: Start docker service
+  become: true
+  service:
+    name: docker.service
+    state: started
