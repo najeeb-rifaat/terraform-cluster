@@ -1,6 +1,0 @@
----
-- include: primary_manager.yml
-  when: type == 'primary'
-
-- include: ancillary_manager.yml
-  when: type == 'ancillary'

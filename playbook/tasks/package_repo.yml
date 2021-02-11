@@ -1,0 +1,12 @@
+---
+- name: Update apt repositories
+  become: true
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: Upgrade all packages to latest
+  become: true
+  apt:
+    name: "*"
+    state: latest

@@ -1,0 +1,33 @@
+---
+- name: Install packages
+  hosts: all
+  tasks:
+    - name: Install docker.io
+      import_tasks: tasks/docker_package.yml
+
+- name: Create primary swarm manager
+  hosts: manager
+  vars_files:
+    - vars/default.yml
+  handlers:
+    - name: Handel primary manager data
+      import_tasks: handlers/primary_manager.yml
+  tasks:
+    - name: Install swarm primary manager
+      import_tasks: tasks/primary_manager.yml
+
+- name: Create ancillary swarm manager
+  hosts: worker
+  vars_files:
+    - vars/default.yml
+  tasks:
+    - name: Install swarm ancillary manager
+      import_tasks: tasks/ancillary_manager.yml
+
+- name: Create ancillary swarm manager
+  hosts: node
+  vars_files:
+    - vars/default.yml
+  tasks:
+    - name: Join swarm as worker node
+      import_tasks: tasks/node_worker.yml

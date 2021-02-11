@@ -10,6 +10,7 @@ endif
 
 start: build
 	terraform apply
+	rsync -r ./playbook/** ./state/
 
 refresh:
 	terraform refresh

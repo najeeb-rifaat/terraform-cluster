@@ -1,0 +1,22 @@
+---
+- name: Check ancillary manager swarm status
+  become: true
+  shell: docker info | grep 'Swarm' | awk '{print $2}'
+  register: ancillary_manager_swarm_status
+  changed_when: "'inactive' in ancillary_manager_swarm_status"
+
+- name: Load swarm manager ip
+  local_action: shell cat ./manager_ip
+  register: manager_ip
+  when: ancillary_manager_swarm_status.stdout == 'inactive'
+
+- name: Load swarm manager join token
+  local_action: shell cat ./manager_token
+  register: manager_token
+  when: ancillary_manager_swarm_status.stdout == 'inactive'
+
+- name: Join swarm as ancillary manager
+  become: true
+  run_once: true
+  shell: docker swarm join --advertise-addr {{ ansible_facts.ens3.ipv4.address }} --listen-addr {{ ansible_facts.ens3.ipv4.address }}:{{ swarm_managment_port }} --token {{ manager_token.stdout }} {{ manager_ip.stdout }}:{{ swarm_managment_port }}
+  when: ancillary_manager_swarm_status.stdout == 'inactive'
