@@ -3,6 +3,9 @@ hostname: ${node_name}
 fqdn: ${node_name}.${network_name}
 manage_etc_hosts: true
 users:
+  - name: root
+    ssh-authorized-keys:
+      - ${file("${state_path}/${ssh_public_key}")}
   - name: ${username}
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, admin

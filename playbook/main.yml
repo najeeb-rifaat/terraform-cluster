@@ -1,6 +1,6 @@
 ---
 - name: Install packages
-  hosts: all
+  hosts: node
   tasks:
     - name: Install docker.io
       import_tasks: tasks/docker_package.yml
@@ -31,3 +31,17 @@
   tasks:
     - name: Join swarm as worker node
       import_tasks: tasks/node_worker.yml
+
+- name: Install ingress proxy
+  hosts: bastian
+  tasks:
+    - name: Setup bastian ingress proxy
+      import_tasks: tasks/bastian_ingress.yml
+
+- name: Install stacks on cluster
+  hosts: manager
+  tasks:
+    - name: Setup infra and proxy stacks
+      import_tasks: tasks/cluster_stacks.yml
+  tags:
+    - stacks

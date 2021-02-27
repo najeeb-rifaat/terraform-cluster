@@ -19,6 +19,4 @@ destroy: refresh
 	terraform destroy
 
 clean: destroy
-	rm -rf state/id_rsa**
-	rm -rf state/inventory
-	rm -rf state/ansible.cfg
+	rm -rf state/**

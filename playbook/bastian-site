@@ -1,0 +1,45 @@
+upstream cluster {
+  server 192.168.123.2;
+  server 192.168.123.3;
+  server 192.168.123.4;
+  server 192.168.123.5;
+}
+
+upstream portainer {
+  server 192.168.123.2:9000;
+}
+
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  server_name _;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+
+  root /var/www/bastian/html;
+  index index.html index.htm;
+
+  ssl_certificate /etc/ssl/certs/bastian.crt;
+  ssl_certificate_key /etc/ssl/private/bastian.key;
+
+  server_name bastian.tplinkdns.com;
+
+  location / {
+    proxy_set_header X-Real-IP  $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header Host $host;
+    proxy_pass http://cluster/;
+  }
+
+  location /portainer/ {
+    proxy_set_header X-Real-IP  $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header Host $host;
+    proxy_pass http://portainer/;
+  }
+}

@@ -69,13 +69,22 @@ resource "libvirt_pool" "cluster-pool" {
   path      = "/opt/kvm/pool/cluster"
 }
 
-// Node disk volume (VDIs created from backing image into designated pool)
-resource "libvirt_volume" "cluster-node-disk" {
-  name            = "cluster-node-${count.index}-disk.qcow2"
+// Node OS disk volume (VDIs created from backing image into designated pool)
+resource "libvirt_volume" "cluster-node-os-disk" {
+  name            = "cluster-node-${count.index}-os-disk.qcow2"
   count           = var.nodes
-  size            = var.disk_size
+  size            = var.os_disk_size
   pool            = libvirt_pool.cluster-pool.name
   base_volume_id  = libvirt_volume.base-image.id
+  format          = "qcow2"
+}
+
+// Node DATA disk volume (mounted disk to be used)
+resource "libvirt_volume" "cluster-node-data-disk" {
+  name            = "cluster-node-${count.index}-data-disk.qcow2"
+  count           = var.nodes
+  size            = var.data_disk_size
+  pool            = libvirt_pool.cluster-pool.name
   format          = "qcow2"
 }
 
@@ -88,6 +97,7 @@ data "template_file" "user_data" {
     node_name = "cluster-node-${count.index}"
     state_path = var.state_path
     ssh_public_key = var.ssh_public_key
+    ssh_private_key = var.ssh_private_key
     network_name = libvirt_network.cluster-internal.name
   }
 }
@@ -111,7 +121,7 @@ resource "libvirt_cloudinit_disk" "cloud-init" {
 resource "libvirt_domain" "nodes" {
   name      = "node-${count.index}"
   count     = var.nodes
-  vcpu      = 1
+  vcpu      = var.vcpu
   memory    = var.memory
   autostart = true
   cloudinit = element(libvirt_cloudinit_disk.cloud-init.*.id, count.index)
@@ -126,12 +136,17 @@ resource "libvirt_domain" "nodes" {
   // Bridge network (will need special setup)
   network_interface {
     network_name = libvirt_network.cluster-public.name
-    mac          = format("52:54:00:00:aa:b%d", count.index)
+    mac          = format("52:54:00:00:aa:c%d", count.index)
   }
 
-  // Disk setting (link with volume)
+  // Disk OS (link with volume)
   disk {
-    volume_id = element(libvirt_volume.cluster-node-disk.*.id, count.index)
+    volume_id = element(libvirt_volume.cluster-node-os-disk.*.id, count.index)
+  }
+
+  // Disk Data (link with volume)
+  disk {
+    volume_id = element(libvirt_volume.cluster-node-data-disk.*.id, count.index)
   }
 
   # IMPORTANT: this is a known bug on cloud images, since they expect a console

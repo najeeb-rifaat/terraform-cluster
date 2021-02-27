@@ -1,6 +1,8 @@
 nodes=5
-memory=1024
-disk_size=10737418240
+vcpu=2
+memory=2048
+os_disk_size=10737418240
+data_disk_size=21437418240
 base_image="/home/najee89b/img/ubuntu-20.qcow2"
 
 state_path="state"

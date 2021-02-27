@@ -1,0 +1,24 @@
+---
+- name: Copy cluster stacks config
+  become: true
+  copy:
+    src: ./stacks
+    dest: /var
+
+- name: Deploy proxy stack
+  become: true
+  shell:
+    cmd: "docker stack deploy -c proxy-stack.yml proxy"
+    chdir: /var/stacks
+
+- name: Deploy infra stack
+  become: true
+  shell:
+    cmd: "docker stack deploy -c infra-stack.yml infra"
+    chdir: /var/stacks
+
+- name: Deploy test stack
+  become: true
+  shell:
+    cmd: "docker stack deploy -c test-stack.yml test"
+    chdir: /var/stacks

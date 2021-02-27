@@ -1,0 +1,57 @@
+---
+- name: Update packages
+  import_tasks: package_repo.yml
+
+- name: Install nginx as a reverse proxy
+  become: true
+  apt:
+    name: nginx
+    state: present
+
+- name: Disable nginx default config
+  become: true
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Delete nginx default config
+  become: true
+  file:
+    path: /etc/nginx/sites-available/default
+    state: absent
+
+- name: Copy nginx bastian site config
+  become: true
+  copy:
+    src: ./bastian-site
+    dest: /etc/nginx/sites-available/bastian-site
+
+- name: Enable nginx bastian site config
+  become: true
+  file:
+    src: /etc/nginx/sites-available/bastian-site
+    dest: /etc/nginx/sites-enabled/bastian-site
+    state: link
+
+- name: Copy bastian cert config
+  become: true
+  copy:
+    src: ./bastian.ssl.conf
+    dest: /etc/ssl/certs/bastian.ssl.conf
+
+- name: Generate bastian certs
+  become: true
+  shell: "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/bastian.key -out /etc/ssl/certs/bastian.crt -config /etc/ssl/certs/bastian.ssl.conf"
+
+- name: Create content root
+  become: true
+  file:
+    path: /var/www/bastian/html
+    state: directory
+
+- name: Enabled and/or restart nginx service
+  become: true
+  service:
+    name: nginx
+    state: restarted
+    enabled: true

@@ -5,11 +5,20 @@ variable "nodes" {
   default = 2
 }
 
+variable "vcpu" {
+  default = 1
+}
+
 variable "memory" {
   default = 256
 }
 
-variable "disk_size" {
+variable "os_disk_size" {
+  # 10,737,418,240Bytes == 10GB
+  default = 10737418240
+}
+
+variable "data_disk_size" {
   # 10,737,418,240Bytes == 10GB
   default = 10737418240
 }
